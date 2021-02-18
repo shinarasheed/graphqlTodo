@@ -6,6 +6,7 @@ const {
   GraphQLInt,
   GraphQLString,
   GraphQLList,
+  GraphQLNonNull,
   GraphQLSchema,
 } = graphql;
 
@@ -100,8 +101,8 @@ const Mutation = new GraphQLObjectType({
       type: AuthorType,
       //the arguement passed to the query
       args: {
-        name: { type: GraphQLString },
-        age: { type: GraphQLInt },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        age: { type: new GraphQLNonNull(GraphQLInt) },
       },
       //this is where the magic happens
       //we usually past data in the request body
@@ -119,9 +120,10 @@ const Mutation = new GraphQLObjectType({
     addBook: {
       type: BookType,
       args: {
-        name: { type: GraphQLString },
-        genre: { type: GraphQLString },
-        authorId: { type: GraphQLID },
+        //new GraphQLNonNull(GraphQLString) makes sure they pass in the field
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        genre: { type: new GraphQLNonNull(GraphQLString) },
+        authorId: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(parent, args) {
         let book = new Book({
