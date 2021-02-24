@@ -1,7 +1,24 @@
+import AppolloClient from 'apollo-boost';
+import { ApolloProvider } from 'react-apollo';
+
 import './App.css';
+import AddBook from './components/AddBook';
+import BookList from './components/BookList';
+
+const client = new AppolloClient({
+  uri: 'http://localhost:7000/graphql',
+});
 
 function App() {
-  return <div className="App">graphl beauty</div>;
+  return (
+    <ApolloProvider client={client}>
+      <div id="main">
+        <h1>Ninja's Reading List</h1>
+        <BookList />
+        <AddBook />
+      </div>
+    </ApolloProvider>
+  );
 }
 
 export default App;
