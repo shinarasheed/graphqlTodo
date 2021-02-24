@@ -9,7 +9,7 @@ const app = express();
 //connect ot db
 connectToDB();
 
-//the single endpoint
+//the single endpoint to make all queries and mutation
 app.use(
   '/graphql',
   graphqlHTTP({
