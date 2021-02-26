@@ -1,22 +1,27 @@
-import React from 'react';
-import { graphql } from 'react-apollo';
+import React, { useState } from 'react';
+import { useQuery } from '@apollo/react-hooks';
 import { getBooksQuery } from '../queries/queries';
+import BookDetails from './BookDetails';
 
-const BookList = (props) => {
-  //this line blows my mind. that you could get access to the state of the data
-  const { loading, books } = props.data;
+const BookList = () => {
+  const [selected, setSelected] = useState(null);
+  const { loading, data } = useQuery(getBooksQuery);
+
   if (loading) {
     return <div>Loading books...</div>;
   }
   return (
     <div>
       <ul id="booklist">
-        {books.map((book) => (
-          <li key={book.id}>{book.name}</li>
+        {data.books.map((book) => (
+          <li key={book.id} onClick={(e) => setSelected(book.id)}>
+            {book.name}
+          </li>
         ))}
       </ul>
+      <BookDetails bookId={selected} />
     </div>
   );
 };
 
-export default graphql(getBooksQuery)(BookList);
+export default BookList;

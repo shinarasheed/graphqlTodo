@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import { graphql } from 'react-apollo';
-import { getAuthorsQuery, addBookMutation } from '../queries/queries';
+import {
+  getAuthorsQuery,
+  getBooksQuery,
+  addBookMutation,
+} from '../queries/queries';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 
-const AddBook = (props) => {
+const AddBook = () => {
   const [formData, setFormData] = useState({
     name: '',
     genre: '',
     authorId: '',
   });
 
+  //better ways to make queries and mutation
   const { loading, data } = useQuery(getAuthorsQuery);
 
   const [addBook] = useMutation(addBookMutation);
@@ -22,7 +26,24 @@ const AddBook = (props) => {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    addBook();
+    addBook({
+      variables: {
+        name: name,
+        genre: genre,
+        authorId: authorId,
+      },
+      //refetch the books
+      refetchQueries: [
+        {
+          query: getBooksQuery,
+        },
+      ],
+    });
+    setFormData({
+      name: '',
+      genre: '',
+      authorId: '',
+    });
   };
 
   if (loading) {
@@ -56,8 +77,8 @@ const AddBook = (props) => {
           value={authorId}
         >
           <option>Select author</option>
-          {data.authors.map((author) => (
-            <option key={author.id} value={author.name}>
+          {data.authors.map((author, index) => (
+            <option key={index} value={author._id}>
               {author.name}
             </option>
           ))}
@@ -68,4 +89,4 @@ const AddBook = (props) => {
   );
 };
 
-export default graphql(getAuthorsQuery)(AddBook);
+export default AddBook;
