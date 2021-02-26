@@ -78,7 +78,7 @@ const AddBook = () => {
         >
           <option>Select author</option>
           {data.authors.map((author, index) => (
-            <option key={index} value={author._id}>
+            <option key={index} value={author.name}>
               {author.name}
             </option>
           ))}
