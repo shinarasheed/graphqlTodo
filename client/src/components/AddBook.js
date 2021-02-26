@@ -1,27 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { graphql } from 'react-apollo';
-import { getAuthorsQuery } from '../queries/queries';
+import { getAuthorsQuery, addBookMutation } from '../queries/queries';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 
 const AddBook = (props) => {
-  const { loading, authors } = props.data;
+  const [formData, setFormData] = useState({
+    name: '',
+    genre: '',
+    authorId: '',
+  });
+
+  const { loading, data } = useQuery(getAuthorsQuery);
+
+  const [addBook] = useMutation(addBookMutation);
+
+  const { name, genre, authorId } = formData;
+
+  const handleOnchange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    addBook();
+  };
+
   if (loading) {
     return <div>Loading Authors...</div>;
   }
   return (
-    <form id="add-book">
+    <form onSubmit={handleOnSubmit} id="add-book">
       <div className="field">
         <label>Book name:</label>
-        <input type="text" />
+        <input
+          onChange={(e) => handleOnchange(e)}
+          name="name"
+          value={name}
+          type="text"
+        />
       </div>
       <div className="field">
         <label>Genre:</label>
-        <input type="text" />
+        <input
+          onChange={(e) => handleOnchange(e)}
+          name="genre"
+          value={genre}
+          type="text"
+        />
       </div>
       <div className="field">
         <label>Author:</label>
-        <select>
+        <select
+          onChange={(e) => handleOnchange(e)}
+          name="authorId"
+          value={authorId}
+        >
           <option>Select author</option>
-          {authors.map((author) => (
+          {data.authors.map((author) => (
             <option key={author.id} value={author.name}>
               {author.name}
             </option>
